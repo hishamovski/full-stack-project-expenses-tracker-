@@ -1,9 +1,11 @@
-class ExpensesController < ApplicationController
-  before_action :set_expense, only: [:show, :update, :destroy]
+# frozen_string_literal: true
+
+class ExpensesController < ProtectedController
+  before_action :set_expense, only: %i[show update destroy]
 
   # GET /expenses
   def index
-    @expenses = Expense.all
+    @expenses = current_user.expenses.all
 
     render json: @expenses
   end
@@ -15,7 +17,9 @@ class ExpensesController < ApplicationController
 
   # POST /expenses
   def create
-    @expense = Expense.new(expense_params)
+
+  @expense = current_user.expenses.build(expense_params)
+  #  @expense = Expense.new(expense_params)
 
     if @expense.save
       render json: @expense, status: :created, location: @expense
@@ -36,16 +40,19 @@ class ExpensesController < ApplicationController
   # DELETE /expenses/1
   def destroy
     @expense.destroy
+
+    head :no_content
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_expense
-      @expense = Expense.find(params[:id])
-    end
 
-    # Only allow a trusted parameter "white list" through.
-    def expense_params
-      params.require(:expense).permit(:amount, :date)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_expense
+    @expense = current_user.expenses.find(params[:id])
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def expense_params
+    params.require(:expense).permit(:amount, :date)
+  end
 end

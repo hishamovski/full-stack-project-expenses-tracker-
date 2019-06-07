@@ -1,10 +1,10 @@
 #!/bin/bash
 
-curl "http://localhost:4741/expenses/${ID}" \
+curl "http://localhost:4741/expenses" \
   --include \
-  --request PATCH \
-  --header "Authorization: Token token=${TOKEN}" \
+  --request POST \
   --header "Content-Type: application/json" \
+  --header "Authorization: Token token=${TOKEN}" \
   --data '{
     "expense": {
       "amount": "'"${AMOUNT}"'",
